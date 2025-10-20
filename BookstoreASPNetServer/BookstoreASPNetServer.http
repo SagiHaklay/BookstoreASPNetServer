@@ -1,0 +1,6 @@
+@BookstoreASPNetServer_HostAddress = http://localhost:5286
+
+GET {{BookstoreASPNetServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
