@@ -1,6 +1,7 @@
 
 using BookstoreASPNetServer.Data;
 using BookstoreASPNetServer.Models;
+using BookstoreASPNetServer.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +38,7 @@ namespace BookstoreASPNetServer
                 };
             });
             // Add services to the container.
-
+            builder.Services.AddTransient<IAccountRepository, AccountRepository>();
             builder.Services.AddControllers().AddNewtonsoftJson(opt => {
                 opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
