@@ -28,7 +28,7 @@ namespace BookstoreASPNetServer.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
         {
             var result = await _accountRepository.Login(loginModel);
-            if (result.IsNullOrEmpty())
+            if (result == null)
             {
                 return Unauthorized();
             }

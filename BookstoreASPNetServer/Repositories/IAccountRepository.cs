@@ -6,6 +6,6 @@ namespace BookstoreASPNetServer.Repositories
     public interface IAccountRepository
     {
         Task<IdentityResult> SignUp(SignupModel signupModel);
-        Task<string> Login(LoginModel loginModel);
+        Task<LoginResultModel?> Login(LoginModel loginModel);
     }
 }
