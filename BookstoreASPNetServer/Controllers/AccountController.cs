@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace BookstoreASPNetServer.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("auth")]
     public class AccountController : ControllerBase
     {
         private readonly IAccountRepository _accountRepository;
@@ -14,7 +14,7 @@ namespace BookstoreASPNetServer.Controllers
         {
             _accountRepository = accountRepository;
         }
-        [HttpPost("")]
+        [HttpPost("register")]
         public async Task<IActionResult> SignUp([FromBody] SignupModel signupModel)
         {
             var result = await _accountRepository.SignUp(signupModel);

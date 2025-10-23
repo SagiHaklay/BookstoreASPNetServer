@@ -51,12 +51,12 @@ namespace BookstoreASPNetServer.Repositories
         }
         public async Task<LoginResultModel?> Login(LoginModel loginModel)
         {
-            var result = await _signInManager.PasswordSignInAsync(loginModel.UserName, loginModel.Password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(loginModel.Username, loginModel.Password, false, false);
             if (!result.Succeeded)
             {
                 return null;
             }
-            var user = await _userManager.FindByNameAsync(loginModel.UserName);
+            var user = await _userManager.FindByNameAsync(loginModel.Username);
             if (user == null)
             {
                 return null;
@@ -75,9 +75,9 @@ namespace BookstoreASPNetServer.Repositories
         {
             AppUser user = new()
             {
-                UserName = signupModel.UserName,
+                UserName = signupModel.Username,
                 Email = signupModel.Email,
-                IsAdmin = false
+                IsAdmin = true
             };
             var result = await _userManager.CreateAsync(user, signupModel.Password);
             if (result.Succeeded)
@@ -94,6 +94,99 @@ namespace BookstoreASPNetServer.Repositories
                 await _roleManager.CreateAsync(new IdentityRole(roleName));
             }
             await _userManager.AddToRoleAsync(user, roleName);
+        }
+
+        public async Task<UserDataModel?> GetUserById(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+            return new UserDataModel() 
+            { 
+                Id = user.Id,
+                Username = user.UserName,
+                Email = user.Email,
+                IsAdmin = user.IsAdmin
+            };
+        }
+
+        public async Task<UserDataModel?> UpdateUser(string id, UserDataModel updatedUser)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            
+            if (user == null)
+            {
+                return null;
+            }
+            IdentityResult? nameResult = null, emailResult = null;
+            string? oldUsername = user.UserName;
+            if (updatedUser.Username != null)
+            {
+                nameResult = await _userManager.SetUserNameAsync(user, updatedUser.Username);
+                if (!nameResult.Succeeded)
+                {
+                    return null;
+                }
+            }
+            if (updatedUser.Email != null)
+            {
+                emailResult = await _userManager.SetEmailAsync(user, updatedUser.Email);
+                if (!emailResult.Succeeded)
+                {
+                    if (nameResult != null)
+                    {
+                        await _userManager.SetUserNameAsync(user, oldUsername);
+                    }
+                    return null;
+                }
+            }
+            return new UserDataModel()
+            {
+                Id = user.Id,
+                Username = user.UserName,
+                Email = user.Email,
+                IsAdmin = user.IsAdmin
+            };
+        }
+
+        public async Task<UserDataModel?> DeleteUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+            var userData = new UserDataModel()
+            {
+                Id = user.Id,
+                Username = user.UserName,
+                Email = user.Email,
+                IsAdmin = user.IsAdmin
+            }
+            ;
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                return null;
+            }
+            return userData;
+        }
+
+        public async Task<string?> ChangePassword(string id, string newPassword, string oldPassword)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+            var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+            if (!result.Succeeded)
+            {
+                return null;
+            }
+            return newPassword;
         }
     }
 }

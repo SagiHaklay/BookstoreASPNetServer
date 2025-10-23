@@ -7,5 +7,9 @@ namespace BookstoreASPNetServer.Repositories
     {
         Task<IdentityResult> SignUp(SignupModel signupModel);
         Task<LoginResultModel?> Login(LoginModel loginModel);
+        Task<UserDataModel?> GetUserById(string id);
+        Task<UserDataModel?> UpdateUser(string id, UserDataModel updatedUser);
+        Task<UserDataModel?> DeleteUser(string id);
+        Task<string?> ChangePassword(string id, string newPassword, string oldPassword);
     }
 }
