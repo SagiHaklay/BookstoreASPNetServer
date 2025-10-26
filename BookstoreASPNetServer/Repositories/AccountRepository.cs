@@ -1,5 +1,7 @@
-﻿using BookstoreASPNetServer.Models;
+﻿using BookstoreASPNetServer.Data;
+using BookstoreASPNetServer.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,13 +15,15 @@ namespace BookstoreASPNetServer.Repositories
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly BookstoreContext _bookstoreContext;
 
-        public AccountRepository(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IConfiguration configuration, RoleManager<IdentityRole> roleManager)
+        public AccountRepository(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IConfiguration configuration, RoleManager<IdentityRole> roleManager, BookstoreContext bookstoreContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _roleManager = roleManager;
+            _bookstoreContext = bookstoreContext;
         }
         private async Task<string?> NewToken(AppUser user)
         {
@@ -164,8 +168,13 @@ namespace BookstoreASPNetServer.Repositories
                 Username = user.UserName,
                 Email = user.Email,
                 IsAdmin = user.IsAdmin
+            };
+            var cartItems = await _bookstoreContext.Carts.Where(c => c.User == user).ToListAsync();
+            if (cartItems != null)
+            {
+                _bookstoreContext.RemoveRange(cartItems);
+                await _bookstoreContext.SaveChangesAsync();
             }
-            ;
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {

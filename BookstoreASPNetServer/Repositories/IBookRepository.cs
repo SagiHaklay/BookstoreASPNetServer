@@ -5,9 +5,9 @@ namespace BookstoreASPNetServer.Repositories
     public interface IBookRepository
     {
         Task<List<BookModel>> GetAllBooks();
-        Task<BookModel?> GetBookById(string id);
+        Task<BookModel?> GetBookById(int id);
         Task<BookModel?> CreateBook(BookDataModel bookData);
-        Task<BookModel?> UpdateBook(string id, BookUpdateModel bookData);
-        Task<BookModel?> DeleteBook(string id);
+        Task<BookModel?> UpdateBook(int id, BookUpdateModel bookData);
+        Task<BookModel?> DeleteBook(int id);
     }
 }

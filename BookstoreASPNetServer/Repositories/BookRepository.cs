@@ -26,12 +26,16 @@ namespace BookstoreASPNetServer.Repositories
             return book;
         }
 
-        public async Task<BookModel?> DeleteBook(string id)
+        public async Task<BookModel?> DeleteBook(int id)
         {
-            var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == id);
+            var book = await _context.Books.Include(b => b.CartItems).FirstOrDefaultAsync(b => b.Id == id);
             if (book == null)
             {
                 return null;
+            }
+            if (book.CartItems != null)
+            {
+                _context.RemoveRange(book.CartItems);
             }
             _context.Remove(book);
             await _context.SaveChangesAsync();
@@ -44,15 +48,15 @@ namespace BookstoreASPNetServer.Repositories
             return books;
         }
 
-        public async Task<BookModel?> GetBookById(string id)
+        public async Task<BookModel?> GetBookById(int id)
         {
             var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == id);
             return book;
         }
 
-        public async Task<BookModel?> UpdateBook(string id, BookUpdateModel bookData)
+        public async Task<BookModel?> UpdateBook(int id, BookUpdateModel bookData)
         {
-            var book = await _context.Books.FindAsync(id);
+            var book = await _context.Books.Include(b => b.CartItems).FirstOrDefaultAsync(b => b.Id == id);
             if (book == null) return null;
             if (bookData.Name != null)
             {
@@ -73,6 +77,13 @@ namespace BookstoreASPNetServer.Repositories
             if (bookData.Discount != null)
             {
                 book.Discount = bookData.Discount;
+            }
+            if (book.CartItems != null)
+            {
+                foreach (var item in book.CartItems)
+                {
+                    item.Product = book;
+                }
             }
             await _context.SaveChangesAsync();
             return book;

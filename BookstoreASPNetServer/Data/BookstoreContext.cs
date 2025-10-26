@@ -11,5 +11,6 @@ namespace BookstoreASPNetServer.Data
             
         }
         public DbSet<BookModel> Books { get; set; }
+        public DbSet<CartItemModel> Carts { get; set; }
     }
 }
