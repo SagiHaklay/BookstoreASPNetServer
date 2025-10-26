@@ -40,6 +40,7 @@ namespace BookstoreASPNetServer
             // Add services to the container.
             builder.Services.AddTransient<IAccountRepository, AccountRepository>();
             builder.Services.AddTransient<IBookRepository, BookRepository>();
+            builder.Services.AddTransient<ICartRepository, CartRepository>();
             builder.Services.AddControllers().AddNewtonsoftJson(opt => {
                 opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
