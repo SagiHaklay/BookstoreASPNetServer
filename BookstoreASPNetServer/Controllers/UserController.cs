@@ -27,7 +27,7 @@ namespace BookstoreASPNetServer.Controllers
             }
             return Ok(user);
         }
-        [HttpPatch("{id}")]
+        [HttpPatch("{id}/update")]
         public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserDataModel updatedUser)
         {
             var user = await _accountRepository.UpdateUser(id, updatedUser);
@@ -37,7 +37,7 @@ namespace BookstoreASPNetServer.Controllers
             }
             return Ok(user);
         }
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/delete")]
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
         {
             var user = await _accountRepository.DeleteUser(id);
