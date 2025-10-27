@@ -49,7 +49,17 @@ namespace BookstoreASPNetServer.Repositories
             }
             _context.AddRange(cartItems);
             await _context.SaveChangesAsync();
-            return cartItems.Select(c => new ProductInCartModel() { Product = c.Product, Quantity = c.Quantity }).ToList();
+            
+            return cartItems.Select(c => new ProductInCartModel() { 
+                Product = new BookProductModel()
+                {
+                    Id = c.Product.Id.ToString(),
+                    Name = c.Product.Name,
+                    Publisher = c.Product.Publisher,
+                    Price = c.Product.Price,
+                    Discount = c.Product.Discount
+                }, 
+                Quantity = c.Quantity }).ToList();
         }
 
         public async Task<ProductInCartModel?> AddProductToCart(string userId, NewCartItemModel newCartItem)
@@ -78,7 +88,14 @@ namespace BookstoreASPNetServer.Repositories
             await _context.SaveChangesAsync();
             return new ProductInCartModel()
             {
-                Product = book,
+                Product = new BookProductModel()
+                {
+                    Id = book.Id.ToString(),
+                    Name = book.Name,
+                    Publisher = book.Publisher,
+                    Price = book.Price,
+                    Discount = book.Discount
+                },
                 Quantity = newCartItem.Quantity
             };
         }
@@ -88,7 +105,14 @@ namespace BookstoreASPNetServer.Repositories
             var cartItems = await _context.Carts.Include(c => c.User).Where(c => c.User.Id == userId)
                 .Include(c => c.Product).Select(c => new ProductInCartModel
                 {
-                    Product = c.Product,
+                    Product = new BookProductModel()
+                    {
+                        Id = c.Product.Id.ToString(),
+                        Name = c.Product.Name,
+                        Publisher = c.Product.Publisher,
+                        Price = c.Product.Price,
+                        Discount = c.Product.Discount
+                    },
                     Quantity = c.Quantity
                 }).ToListAsync();
             return cartItems;
@@ -102,6 +126,10 @@ namespace BookstoreASPNetServer.Repositories
                 return null;
             }
             var cartItems = await _context.Carts.Include(c => c.User).Where(c => c.User.Id == userId).Include(c => c.Product).ToListAsync();
+            if (cartItems.Count == 0)
+            {
+                return null;
+            }
             foreach (var cartItem in cartItems)
             {
                 cartItem.Product.CartItems?.Remove(cartItem);
@@ -109,7 +137,9 @@ namespace BookstoreASPNetServer.Repositories
             user.CartItems?.Clear();
             _context.RemoveRange(cartItems);
             await _context.SaveChangesAsync();
-            return cartItems.Select(c => new ProductInCartModel() { Product = c.Product, Quantity = c.Quantity }).ToList();
+            return cartItems.Select(c => new ProductInCartModel() { 
+                Product = new BookProductModel() { Id = c.Product.Id.ToString(), Name = c.Product.Name, Publisher = c.Product.Publisher, Price = c.Product.Price, Discount = c.Product.Discount }, 
+                Quantity = c.Quantity }).ToList();
         }
 
         public async Task<ProductInCartModel?> RemoveProductFromCart(string userId, int productId)
@@ -126,7 +156,14 @@ namespace BookstoreASPNetServer.Repositories
             await _context.SaveChangesAsync();
             return new ProductInCartModel()
             {
-                Product = cartItem.Product,
+                Product = new BookProductModel()
+                {
+                    Id = cartItem.Product.Id.ToString(),
+                    Name = cartItem.Product.Name,
+                    Publisher = cartItem.Product.Publisher,
+                    Price = cartItem.Product.Price,
+                    Discount = cartItem.Product.Discount
+                },
                 Quantity = cartItem.Quantity
             };
         }

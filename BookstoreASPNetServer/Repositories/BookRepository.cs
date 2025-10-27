@@ -11,7 +11,7 @@ namespace BookstoreASPNetServer.Repositories
         {
             _context = context;
         }
-        public async Task<BookModel?> CreateBook(BookDataModel bookData)
+        public async Task<BookProductModel?> CreateBook(BookDataModel bookData)
         {
             var book = new BookModel()
             {
@@ -23,10 +23,17 @@ namespace BookstoreASPNetServer.Repositories
             };
             _context.Add(book);
             await _context.SaveChangesAsync();
-            return book;
+            return new BookProductModel()
+            {
+                Id = book.Id.ToString(),
+                Name = book.Name,
+                Publisher = book.Publisher,
+                Price = book.Price,
+                Discount = book.Discount
+            };
         }
 
-        public async Task<BookModel?> DeleteBook(int id)
+        public async Task<BookProductModel?> DeleteBook(int id)
         {
             var book = await _context.Books.Include(b => b.CartItems).FirstOrDefaultAsync(b => b.Id == id);
             if (book == null)
@@ -39,22 +46,46 @@ namespace BookstoreASPNetServer.Repositories
             }
             _context.Remove(book);
             await _context.SaveChangesAsync();
-            return book;
+            return new BookProductModel()
+            {
+                Id = book.Id.ToString(),
+                Name = book.Name,
+                Publisher = book.Publisher,
+                Price = book.Price,
+                Discount = book.Discount
+            };
         }
 
-        public async Task<List<BookModel>> GetAllBooks()
+        public async Task<List<BookProductModel>> GetAllBooks()
         {
-            var books = await _context.Books.ToListAsync();
+            var books = await _context.Books.Select(b => new BookProductModel() {
+                Id = b.Id.ToString(),
+                Name = b.Name,
+                Publisher = b.Publisher,
+                Price = b.Price,
+                Discount = b.Discount
+            }).ToListAsync();
             return books;
         }
 
-        public async Task<BookModel?> GetBookById(int id)
+        public async Task<BookProductModel?> GetBookById(int id)
         {
             var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == id);
-            return book;
+            if (book == null)
+            {
+                return null;
+            }
+            return new BookProductModel()
+            {
+                Id = book.Id.ToString(),
+                Name = book.Name,
+                Publisher = book.Publisher,
+                Price = book.Price,
+                Discount = book.Discount
+            };
         }
 
-        public async Task<BookModel?> UpdateBook(int id, BookUpdateModel bookData)
+        public async Task<BookProductModel?> UpdateBook(int id, BookUpdateModel bookData)
         {
             var book = await _context.Books.Include(b => b.CartItems).FirstOrDefaultAsync(b => b.Id == id);
             if (book == null) return null;
@@ -86,7 +117,14 @@ namespace BookstoreASPNetServer.Repositories
                 }
             }
             await _context.SaveChangesAsync();
-            return book;
+            return new BookProductModel()
+            {
+                Id = book.Id.ToString(),
+                Name = book.Name,
+                Publisher = book.Publisher,
+                Price = book.Price,
+                Discount = book.Discount
+            };
         }
     }
 }

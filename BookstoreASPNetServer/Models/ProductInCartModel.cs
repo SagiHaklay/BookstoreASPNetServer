@@ -2,7 +2,7 @@
 {
     public class ProductInCartModel
     {
-        public BookModel Product { get; set; }
+        public BookProductModel Product { get; set; }
         public int Quantity { get; set; }
     }
 }
