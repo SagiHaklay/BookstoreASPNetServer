@@ -13,5 +13,6 @@ namespace BookstoreASPNetServer.Models
         public float Price { get; set; }
         [Range(0, 100)]
         public int? Discount { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

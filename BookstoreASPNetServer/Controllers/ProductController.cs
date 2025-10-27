@@ -10,9 +10,11 @@ namespace BookstoreASPNetServer.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IBookRepository _bookRepository;
-        public ProductController(IBookRepository bookRepository)
+        private readonly IConfiguration _config;
+        public ProductController(IBookRepository bookRepository, IConfiguration config)
         {
             _bookRepository = bookRepository;
+            _config = config;
         }
         [HttpGet("")]
         public async Task<IActionResult> GetAllProducts()
@@ -31,8 +33,17 @@ namespace BookstoreASPNetServer.Controllers
             return Ok(result);
         }
         [HttpPost("create")]
-        public async Task<IActionResult> CreateProduct([FromBody] BookDataModel bookData)
+        public async Task<IActionResult> CreateProduct([FromForm] BookDataModel bookData, IFormFile? image)
         {
+            if (image != null)
+            {
+                var imageUrl = await SaveFileAsync(image);
+                if (imageUrl == null)
+                {
+                    return BadRequest();
+                }
+                bookData.ImageUrl = imageUrl;
+            }
             var result = await _bookRepository.CreateBook(bookData);
             if (result == null)
             {
@@ -41,8 +52,17 @@ namespace BookstoreASPNetServer.Controllers
             return Ok(result);
         }
         [HttpPatch("{id}/update")]
-        public async Task<IActionResult> UpdateProduct([FromRoute] int id, [FromBody] BookUpdateModel bookData)
+        public async Task<IActionResult> UpdateProduct([FromRoute] int id, [FromForm] BookUpdateModel bookData, IFormFile? image)
         {
+            if (image != null)
+            {
+                var imageUrl = await SaveFileAsync(image);
+                if (imageUrl == null)
+                {
+                    return BadRequest();
+                }
+                bookData.ImageUrl = imageUrl;
+            }
             var result = await _bookRepository.UpdateBook(id, bookData);
             if (result == null)
             {
@@ -59,6 +79,23 @@ namespace BookstoreASPNetServer.Controllers
                 return BadRequest();
             }
             return Ok(result);
+        }
+
+        private async Task<string?> SaveFileAsync(IFormFile file)
+        { 
+            if (file.Length > 0)
+            {
+                var fileName = Path.GetRandomFileName();
+                var storedFilesPath = _config["StoredFilesPath"];
+                if (storedFilesPath == null) return null;
+                var filePath = Path.Combine(storedFilesPath, fileName);
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                return fileName;
+            }
+            return null;
         }
     }
 }

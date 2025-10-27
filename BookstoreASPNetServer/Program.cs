@@ -63,6 +63,7 @@ namespace BookstoreASPNetServer
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseCors();
             app.UseAuthentication();

@@ -19,7 +19,8 @@ namespace BookstoreASPNetServer.Repositories
                 Author = bookData.Author,
                 Publisher = bookData.Publisher,
                 Price = bookData.Price,
-                Discount = bookData.Discount
+                Discount = bookData.Discount,
+                ImageUrl = bookData.ImageUrl
             };
             _context.Add(book);
             await _context.SaveChangesAsync();
@@ -29,7 +30,8 @@ namespace BookstoreASPNetServer.Repositories
                 Name = book.Name,
                 Publisher = book.Publisher,
                 Price = book.Price,
-                Discount = book.Discount
+                Discount = book.Discount,
+                ImageUrl = book.ImageUrl
             };
         }
 
@@ -52,7 +54,8 @@ namespace BookstoreASPNetServer.Repositories
                 Name = book.Name,
                 Publisher = book.Publisher,
                 Price = book.Price,
-                Discount = book.Discount
+                Discount = book.Discount,
+                ImageUrl = book.ImageUrl
             };
         }
 
@@ -63,7 +66,8 @@ namespace BookstoreASPNetServer.Repositories
                 Name = b.Name,
                 Publisher = b.Publisher,
                 Price = b.Price,
-                Discount = b.Discount
+                Discount = b.Discount,
+                ImageUrl = b.ImageUrl
             }).ToListAsync();
             return books;
         }
@@ -81,7 +85,8 @@ namespace BookstoreASPNetServer.Repositories
                 Name = book.Name,
                 Publisher = book.Publisher,
                 Price = book.Price,
-                Discount = book.Discount
+                Discount = book.Discount,
+                ImageUrl = book.ImageUrl
             };
         }
 
@@ -109,6 +114,10 @@ namespace BookstoreASPNetServer.Repositories
             {
                 book.Discount = bookData.Discount;
             }
+            if (bookData.ImageUrl != null)
+            {
+                book.ImageUrl = bookData.ImageUrl;
+            }
             if (book.CartItems != null)
             {
                 foreach (var item in book.CartItems)
@@ -123,7 +132,8 @@ namespace BookstoreASPNetServer.Repositories
                 Name = book.Name,
                 Publisher = book.Publisher,
                 Price = book.Price,
-                Discount = book.Discount
+                Discount = book.Discount,
+                ImageUrl = book.ImageUrl
             };
         }
     }
