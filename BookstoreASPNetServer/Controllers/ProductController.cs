@@ -1,5 +1,6 @@
 ﻿using BookstoreASPNetServer.Models;
 using BookstoreASPNetServer.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,6 +34,7 @@ namespace BookstoreASPNetServer.Controllers
             return Ok(result);
         }
         [HttpPost("create")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> CreateProduct([FromForm] BookDataModel bookData, IFormFile? image)
         {
             if (image != null)
@@ -52,6 +54,7 @@ namespace BookstoreASPNetServer.Controllers
             return Ok(result);
         }
         [HttpPatch("{id}/update")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProduct([FromRoute] int id, [FromForm] BookUpdateModel bookData, IFormFile? image)
         {
             if (image != null)
@@ -71,6 +74,7 @@ namespace BookstoreASPNetServer.Controllers
             return Ok(result);
         }
         [HttpDelete("{id}/delete")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProduct([FromRoute] int id)
         {
             var result = await _bookRepository.DeleteBook(id);
@@ -85,7 +89,8 @@ namespace BookstoreASPNetServer.Controllers
         { 
             if (file.Length > 0)
             {
-                var fileName = Path.GetRandomFileName();
+                string ext = Path.GetExtension(file.FileName);
+                var fileName = Path.GetRandomFileName() + ext;
                 var storedFilesPath = _config["StoredFilesPath"];
                 if (storedFilesPath == null) return null;
                 var filePath = Path.Combine(storedFilesPath, fileName);

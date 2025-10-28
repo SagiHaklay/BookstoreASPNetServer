@@ -2,6 +2,7 @@
 using BookstoreASPNetServer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookstoreASPNetServer.Controllers
 {
@@ -33,13 +34,13 @@ namespace BookstoreASPNetServer.Controllers
             return Ok(result);
         }
         [HttpPost("{userId}/addMany")]
-        public async Task<IActionResult> AddManyToCart([FromRoute] string userId, [FromBody] List<NewCartItemModel> cartItems)
+        public async Task<IActionResult> AddManyToCart([FromRoute] string userId, [FromBody] CartItemList cartItemList)
         {
-            if (cartItems.Count == 0)
+            if (cartItemList.CartItems.Count == 0)
             {
                 return BadRequest();
             }
-            var result = await _cartRepository.AddProductRangeToCart(userId, cartItems);
+            var result = await _cartRepository.AddProductRangeToCart(userId, cartItemList.CartItems);
             if (result == null)
             {
                 return BadRequest();
@@ -57,6 +58,7 @@ namespace BookstoreASPNetServer.Controllers
             return Ok(result);
         }
         [HttpPost("{userId}/order")]
+        [Authorize]
         public async Task<IActionResult> PlaceOrder([FromRoute] string userId)
         {
             var result = await _cartRepository.PlaceOrder(userId);

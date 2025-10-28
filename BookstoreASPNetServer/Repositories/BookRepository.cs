@@ -28,6 +28,7 @@ namespace BookstoreASPNetServer.Repositories
             {
                 Id = book.Id.ToString(),
                 Name = book.Name,
+                Author = book.Author,
                 Publisher = book.Publisher,
                 Price = book.Price,
                 Discount = book.Discount,
@@ -46,17 +47,19 @@ namespace BookstoreASPNetServer.Repositories
             {
                 _context.RemoveRange(book.CartItems);
             }
-            _context.Remove(book);
-            await _context.SaveChangesAsync();
-            return new BookProductModel()
+            var removed = new BookProductModel()
             {
                 Id = book.Id.ToString(),
                 Name = book.Name,
+                Author = book.Author,
                 Publisher = book.Publisher,
                 Price = book.Price,
                 Discount = book.Discount,
                 ImageUrl = book.ImageUrl
             };
+            _context.Remove(book);
+            await _context.SaveChangesAsync();
+            return removed;
         }
 
         public async Task<List<BookProductModel>> GetAllBooks()
@@ -64,6 +67,7 @@ namespace BookstoreASPNetServer.Repositories
             var books = await _context.Books.Select(b => new BookProductModel() {
                 Id = b.Id.ToString(),
                 Name = b.Name,
+                Author = b.Author,
                 Publisher = b.Publisher,
                 Price = b.Price,
                 Discount = b.Discount,
@@ -83,6 +87,7 @@ namespace BookstoreASPNetServer.Repositories
             {
                 Id = book.Id.ToString(),
                 Name = book.Name,
+                Author = book.Author,
                 Publisher = book.Publisher,
                 Price = book.Price,
                 Discount = book.Discount,
@@ -130,6 +135,7 @@ namespace BookstoreASPNetServer.Repositories
             {
                 Id = book.Id.ToString(),
                 Name = book.Name,
+                Author = book.Author,
                 Publisher = book.Publisher,
                 Price = book.Price,
                 Discount = book.Discount,

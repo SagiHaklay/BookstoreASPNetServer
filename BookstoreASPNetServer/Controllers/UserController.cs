@@ -8,6 +8,7 @@ namespace BookstoreASPNetServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IAccountRepository _accountRepository;

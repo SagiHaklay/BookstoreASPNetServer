@@ -81,7 +81,7 @@ namespace BookstoreASPNetServer.Repositories
             {
                 UserName = signupModel.Username,
                 Email = signupModel.Email,
-                IsAdmin = true
+                IsAdmin = false
             };
             var result = await _userManager.CreateAsync(user, signupModel.Password);
             if (result.Succeeded)
