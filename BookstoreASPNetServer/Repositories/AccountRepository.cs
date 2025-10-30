@@ -197,5 +197,10 @@ namespace BookstoreASPNetServer.Repositories
             }
             return newPassword;
         }
+        public async Task<bool> ValidateUserId(string userId, string? username)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            return user != null && user.UserName == username;
+        }
     }
 }

@@ -26,11 +26,20 @@ namespace BookstoreASPNetServer.Controllers
             {
                 return NotFound();
             }
+            if (user.Username != User.Identity?.Name)
+            {
+                return Unauthorized();
+            }
             return Ok(user);
         }
         [HttpPatch("{id}/update")]
         public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserDataModel updatedUser)
         {
+            bool isValid = await _accountRepository.ValidateUserId(id, User.Identity?.Name);
+            if (!isValid)
+            {
+                return Unauthorized();
+            }
             var user = await _accountRepository.UpdateUser(id, updatedUser);
             if (user == null)
             {
@@ -41,6 +50,11 @@ namespace BookstoreASPNetServer.Controllers
         [HttpDelete("{id}/delete")]
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
         {
+            bool isValid = await _accountRepository.ValidateUserId(id, User.Identity?.Name);
+            if (!isValid)
+            {
+                return Unauthorized();
+            }
             var user = await _accountRepository.DeleteUser(id);
             if (user == null)
             {
@@ -51,12 +65,18 @@ namespace BookstoreASPNetServer.Controllers
         [HttpPatch("{id}/password")]
         public async Task<IActionResult> ChangePassword([FromRoute] string id, [FromBody] ChangePasswordModel changePassword)
         {
+            bool isValid = await _accountRepository.ValidateUserId(id, User.Identity?.Name);
+            if (!isValid)
+            {
+                return Unauthorized();
+            }
             var result = await _accountRepository.ChangePassword(id, changePassword.NewPassword, changePassword.OldPassword);
             if (result == null)
             {
                 return BadRequest();
             }
-            return Ok(result);
+            return Ok(changePassword);
         }
+
     }
 }

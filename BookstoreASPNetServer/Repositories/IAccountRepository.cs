@@ -11,5 +11,6 @@ namespace BookstoreASPNetServer.Repositories
         Task<UserDataModel?> UpdateUser(string id, UserDataModel updatedUser);
         Task<UserDataModel?> DeleteUser(string id);
         Task<string?> ChangePassword(string id, string newPassword, string oldPassword);
+        Task<bool> ValidateUserId(string userId, string? username);
     }
 }

@@ -12,6 +12,7 @@ namespace BookstoreASPNetServer.Controllers
     {
         private readonly IBookRepository _bookRepository;
         private readonly IConfiguration _config;
+        private readonly string[] _allowedExtensions = new string[] { ".png", ".jpg", ".jpeg" };
         public ProductController(IBookRepository bookRepository, IConfiguration config)
         {
             _bookRepository = bookRepository;
@@ -42,9 +43,13 @@ namespace BookstoreASPNetServer.Controllers
                 var imageUrl = await SaveFileAsync(image);
                 if (imageUrl == null)
                 {
-                    return BadRequest();
+                    return BadRequest("Could not upload file.");
                 }
                 bookData.ImageUrl = imageUrl;
+            }
+            else
+            {
+                bookData.ImageUrl = null;
             }
             var result = await _bookRepository.CreateBook(bookData);
             if (result == null)
@@ -62,9 +67,13 @@ namespace BookstoreASPNetServer.Controllers
                 var imageUrl = await SaveFileAsync(image);
                 if (imageUrl == null)
                 {
-                    return BadRequest();
+                    return BadRequest("Could not upload file.");
                 }
                 bookData.ImageUrl = imageUrl;
+            }
+            else
+            {
+                bookData.ImageUrl = null;
             }
             var result = await _bookRepository.UpdateBook(id, bookData);
             if (result == null)
@@ -90,6 +99,7 @@ namespace BookstoreASPNetServer.Controllers
             if (file.Length > 0)
             {
                 string ext = Path.GetExtension(file.FileName);
+                if (!_allowedExtensions.Contains(ext)) return null;
                 var fileName = Path.GetRandomFileName() + ext;
                 var storedFilesPath = _config["StoredFilesPath"];
                 if (storedFilesPath == null) return null;

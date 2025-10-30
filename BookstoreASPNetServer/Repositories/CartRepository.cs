@@ -21,13 +21,22 @@ namespace BookstoreASPNetServer.Repositories
             {
                 return null;
             }
+            var existingCart = await _context.Carts.Include(c => c.User).Where(c => c.User.Id == userId).Include(c => c.Product).ToListAsync();
+            foreach (var cartItem in existingCart)
+            {
+                cartItem.Product.CartItems?.Remove(cartItem);
+            }
+            user.CartItems?.Clear();
+            
             List<CartItemModel> cartItems = new List<CartItemModel>();
             foreach (var newCartItem in newCartItems)
             {
+                var existingProduct = cartItems.FirstOrDefault(c => c.Product.Id == newCartItem.ProductId);
+                if (existingProduct != null) continue;
                 var book = await _context.Books.FindAsync(newCartItem.ProductId);
                 if (book == null)
                 {
-                    return null;
+                    continue;
                 }
                 var cartItem = new CartItemModel()
                 {
@@ -76,6 +85,9 @@ namespace BookstoreASPNetServer.Repositories
             {
                 return null;
             }
+            var existingCartItem = await _context.Carts.Include(c => c.User).Where(c => c.User.Id == userId)
+                .Include(c => c.Product).FirstOrDefaultAsync(c => c.Product.Id == newCartItem.ProductId);
+            if (existingCartItem != null) return null;
             var cartItem = new CartItemModel()
             { 
                 User = user,
@@ -135,6 +147,14 @@ namespace BookstoreASPNetServer.Repositories
             if (cartItems.Count == 0)
             {
                 return null;
+            }
+            foreach (var cartItem in cartItems)
+            {
+                var book = await _context.Books.FindAsync(cartItem.Product.Id);
+                if (book == null)
+                {
+                    return null;
+                }
             }
             var orderItems = cartItems.Select(c => new ProductInCartModel()
             {
