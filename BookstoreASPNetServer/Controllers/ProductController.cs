@@ -43,7 +43,7 @@ namespace BookstoreASPNetServer.Controllers
                 var imageUrl = await SaveFileAsync(image);
                 if (imageUrl == null)
                 {
-                    return BadRequest("Could not upload file.");
+                    return BadRequest("Failed to upload image file.");
                 }
                 bookData.ImageUrl = imageUrl;
             }
@@ -54,7 +54,7 @@ namespace BookstoreASPNetServer.Controllers
             var result = await _bookRepository.CreateBook(bookData);
             if (result == null)
             {
-                return BadRequest();
+                return BadRequest("Failed to create book.");
             }
             return Ok(result);
         }
@@ -67,7 +67,7 @@ namespace BookstoreASPNetServer.Controllers
                 var imageUrl = await SaveFileAsync(image);
                 if (imageUrl == null)
                 {
-                    return BadRequest("Could not upload file.");
+                    return BadRequest("Failed to upload image file.");
                 }
                 bookData.ImageUrl = imageUrl;
             }
@@ -78,7 +78,7 @@ namespace BookstoreASPNetServer.Controllers
             var result = await _bookRepository.UpdateBook(id, bookData);
             if (result == null)
             {
-                return BadRequest();
+                return BadRequest("Failed to update book.");
             }
             return Ok(result);
         }
