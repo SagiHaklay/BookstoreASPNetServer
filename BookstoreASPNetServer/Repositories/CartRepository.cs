@@ -146,14 +146,14 @@ namespace BookstoreASPNetServer.Repositories
             var cartItems = await _context.Carts.Include(c => c.User).Where(c => c.User.Id == userId).Include(c => c.Product).ToListAsync();
             if (cartItems.Count == 0)
             {
-                return null;
+                throw new Exception("Cart is empty.");
             }
             foreach (var cartItem in cartItems)
             {
                 var book = await _context.Books.FindAsync(cartItem.Product.Id);
                 if (book == null)
                 {
-                    return null;
+                    throw new Exception($"Book {cartItem.Product.Id} in cart doesn't exist.");
                 }
             }
             var orderItems = cartItems.Select(c => new ProductInCartModel()

@@ -131,7 +131,7 @@ namespace BookstoreASPNetServer.Repositories
                 nameResult = await _userManager.SetUserNameAsync(user, updatedUser.Username);
                 if (!nameResult.Succeeded)
                 {
-                    return null;
+                    throw new Exception("Failed to change user name.");
                 }
             }
             if (updatedUser.Email != null)
@@ -141,7 +141,7 @@ namespace BookstoreASPNetServer.Repositories
                 {
                     if (nameResult != null)
                     {
-                        await _userManager.SetUserNameAsync(user, oldUsername);
+                        throw new Exception("Failed to change e-mail.");
                     }
                     return null;
                 }
@@ -178,7 +178,7 @@ namespace BookstoreASPNetServer.Repositories
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
-                return null;
+                throw new Exception("Failed to delete user.");
             }
             return userData;
         }
@@ -193,7 +193,7 @@ namespace BookstoreASPNetServer.Repositories
             var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
             if (!result.Succeeded)
             {
-                return null;
+                throw new Exception("Failed to change password.");
             }
             return newPassword;
         }
