@@ -9,5 +9,6 @@ namespace BookstoreASPNetServer.Repositories
         Task<List<ProductInCartModel>?> AddProductRangeToCart(string userId, List<NewCartItemModel> newCartItems);
         Task<ProductInCartModel?> RemoveProductFromCart(string userId, int productId);
         Task<List<ProductInCartModel>?> PlaceOrder(string userId);
+        Task<ProductInCartModel?> UpdateProductQuantityInCart(string userId, NewCartItemModel productUpdate);
     }
 }

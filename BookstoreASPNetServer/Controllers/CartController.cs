@@ -99,5 +99,21 @@ namespace BookstoreASPNetServer.Controllers
             }
             return Ok(result);
         }
+        [HttpPatch("{userId}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProductQuantity([FromRoute] string userId, [FromBody] NewCartItemModel productUpdate)
+        {
+            bool isValid = await _accountRepository.ValidateUserId(userId, User.Identity?.Name);
+            if (!isValid)
+            {
+                return Unauthorized();
+            }
+            var result = await _cartRepository.UpdateProductQuantityInCart(userId, productUpdate);
+            if (result == null)
+            {
+                return BadRequest();
+            }
+            return Ok(result);
+        }
     }
 }

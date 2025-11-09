@@ -115,6 +115,41 @@ namespace BookstoreASPNetServer.Repositories
                 Quantity = newCartItem.Quantity
             };
         }
+        public async Task<ProductInCartModel?> UpdateProductQuantityInCart(string userId, NewCartItemModel productUpdate)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return null;
+            }
+            var book = await _context.Books.FindAsync(productUpdate.ProductId);
+            if (book == null)
+            {
+                return null;
+            }
+            var cartItem = await _context.Carts.Include(c => c.User).Where(c => c.User.Id == userId)
+                .Include(c => c.Product).FirstOrDefaultAsync(c => c.Product.Id == productUpdate.ProductId);
+            if (cartItem == null)
+            {
+                return null;
+            }
+            cartItem.Quantity = productUpdate.Quantity;
+            await _context.SaveChangesAsync();
+            return new ProductInCartModel()
+            {
+                Product = new BookProductModel()
+                {
+                    Id = book.Id.ToString(),
+                    Name = book.Name,
+                    Author = book.Author,
+                    Publisher = book.Publisher,
+                    Price = book.Price,
+                    Discount = book.Discount,
+                    ImageUrl = book.ImageUrl
+                },
+                Quantity = productUpdate.Quantity
+            };
+        }
 
         public async Task<List<ProductInCartModel>?> GetCartByUserId(string userId)
         {
